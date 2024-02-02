@@ -57,3 +57,4 @@ if __name__ == "__main__":
     print(poly_integral([0]))  # Output: [0]
     print(poly_integral([5]))  # Output: [0, 5]
     # Add more examples if necessary
+    
