@@ -1,15 +1,26 @@
 #!/usr/bin/env python3
+'''
+Module for calculating the integral of a polynomial.
+
+This module provides a function poly_integral which takes a list of coefficients
+(poly) representing a polynomial and an integration constant (C) and returns a
+new list of coefficients representing the integral of the polynomial.
+'''
 
 def poly_integral(poly, C=0):
     '''
     Calculates the integral of the given polynomial.
 
+    The index of the list represents the power of x, and the value at that index
+    represents the coefficient.
+
     Parameters:
     poly (list): A list of coefficients, where the index represents the power of x.
-    C (int or float): The integration constant.
+    C (int or float): The integration constant. Defaults to 0.
 
     Returns:
-    list: A new list of coefficients representing the integral of the polynomial.
+    list: A new list of coefficients representing the integral of the polynomial,
+          or None if input is invalid.
     '''
     if not isinstance(poly, list) or not poly:
         return None
@@ -22,6 +33,8 @@ def poly_integral(poly, C=0):
         C = int(C)
     integral = [C]
     for power, coefficient in enumerate(poly):
+        if power == 0 and coefficient == 0:
+            continue
         if coefficient % (power + 1) == 0:
             new_coefficient = coefficient // (power + 1)
         else:
@@ -31,7 +44,4 @@ def poly_integral(poly, C=0):
         integral.pop()
     return integral
 
-# Example usage:
-poly = [5, 3, 0, 1]  # Represents the polynomial 5 + 3x + x^3
-integral = poly_integral(poly)
-print(integral)  # Output should be [0, 5, 1.5, 0, 0.25]
+# Remember to add the correct module-level docstring at the top of the file.
