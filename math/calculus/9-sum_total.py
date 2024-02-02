@@ -3,6 +3,7 @@
 Module for calculating the summation of i squared from 1 to n.
 '''
 
+
 def summation_i_squared(n):
     '''
     Calculate the sum of the squares of all integers from 1 to n.
