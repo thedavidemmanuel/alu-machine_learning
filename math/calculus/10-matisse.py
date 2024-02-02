@@ -30,7 +30,6 @@ def poly_derivative(poly):
     if len(poly) == 1:
         return [0]
     derivative = [coefficient * power for power, coefficient in enumerate(poly)][1:]
-    
     return derivative
 
 
@@ -38,4 +37,3 @@ def poly_derivative(poly):
 if __name__ == "__main__":
     poly = [5, 3, 0, 1]  # Represents the polynomial 5 + 3x + x^3
     print(poly_derivative(poly))  # Output: [3, 0, 3]
-    
