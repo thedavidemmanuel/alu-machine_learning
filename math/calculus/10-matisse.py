@@ -20,8 +20,11 @@ def poly_derivative(poly):
           or None if input is invalid.
     '''
     # Validate input
-    if not isinstance(poly, list) or any(not isinstance(c, (int, float)) for c in poly):
+    if not isinstance(poly, list) or not poly:
         return None
+    for coefficient in poly:
+        if not isinstance(coefficient, (int, float)):
+            return None
 
     # Calculate derivative
     if len(poly) == 1:
