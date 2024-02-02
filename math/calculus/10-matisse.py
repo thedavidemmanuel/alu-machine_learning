@@ -29,7 +29,10 @@ def poly_derivative(poly):
     # Calculate derivative
     if len(poly) == 1:
         return [0]
-    derivative = [coefficient * power for power, coefficient in enumerate(poly)][1:]
+    derivative = [
+        coefficient * power
+        for power, coefficient in enumerate(poly)
+    ][1:]
     return derivative
 
 
