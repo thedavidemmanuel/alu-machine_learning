@@ -2,9 +2,10 @@
 '''
 Module for calculating the integral of a polynomial.
 
-This module provides a function poly_integral which takes a list of coefficients
-(poly) representing a polynomial and an integration constant (C). It returns a
-new list of coefficients representing the integral of the polynomial.
+This module provides a function poly_integral which takes a list
+of coefficients (poly) representing a polynomial and an integration
+constant (C), returning a new list of coefficients representing
+the integral of the polynomial.
 '''
 
 
