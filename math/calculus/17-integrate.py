@@ -4,7 +4,7 @@ Module for calculating the integral of a polynomial.
 
 This module provides a function poly_integral which takes a list
 of coefficients (poly) representing a polynomial and an integration
-constant (C), returning a new list of coefficients representing
+constant (C). It returns a new list of coefficients representing
 the integral of the polynomial.
 '''
 
@@ -41,9 +41,11 @@ def poly_integral(poly, C=0):
             integral.append(0)
         else:
             new_coefficient = coefficient / (power + 1)
-            integral.append(int(new_coefficient) if new_coefficient.is_integer() else new_coefficient)
+            integral.append(int(new_coefficient) 
+                            if new_coefficient.is_integer() 
+                            else new_coefficient)
     
-    # Handle the case where last element is 0 and list has more than one element
+    # Remove last element if 0 and list has more than one element
     if len(integral) > 1 and integral[-1] == 0:
         integral.pop()
     
