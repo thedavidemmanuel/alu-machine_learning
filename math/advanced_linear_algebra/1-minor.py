@@ -3,7 +3,6 @@
 Module for calculating the minor matrix of a given matrix.
 """
 
-
 def determinant(matrix):
     """
     Calculates the determinant of a matrix.
@@ -25,7 +24,6 @@ def determinant(matrix):
         det += ((-1) ** i) * matrix[0][i] * determinant(mini)
     return det
 
-
 def minor(matrix):
     """
     Calculates the minor matrix of a given matrix.
@@ -42,10 +40,10 @@ def minor(matrix):
     """
     if not all(isinstance(row, list) for row in matrix) or not isinstance(matrix, list):
         raise TypeError("matrix must be a list of lists")
-
+    
     if len(matrix) == 0 or any(len(row) != len(matrix) for row in matrix):
         raise ValueError("matrix must be a non-empty square matrix")
-
+    
     if len(matrix) == 1 and len(matrix[0]) == 1:
         return [[1]]
 
@@ -53,9 +51,8 @@ def minor(matrix):
     for i in range(len(matrix)):
         minor_row = []
         for j in range(len(matrix)):
-            # Adjusting line length for compliance
-            submatrix = [row[:j] + row[j + 1:]
-                         for k, row in enumerate(matrix) if k != i]
+            # Ensure list comprehension fits within the character limit
+            submatrix = [row[:j] + row[j + 1:] for k, row in enumerate(matrix) if k != i]
             minor_row.append(determinant(submatrix))
         minor_matrix.append(minor_row)
 
