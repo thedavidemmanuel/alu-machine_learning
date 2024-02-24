@@ -43,6 +43,9 @@ def cofactor(matrix):
     if len(matrix) == 0 or any(len(row) != len(matrix) for row in matrix):
         raise ValueError("matrix must be a non-empty square matrix")
 
+    if len(matrix) == 1 and len(matrix[0]) == 1:  # Correct handling for single-element matrix
+        return [[1]]
+
     minor_matrix = []
     for i in range(len(matrix)):
         minor_row = []
