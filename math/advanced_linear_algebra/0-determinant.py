@@ -22,18 +22,19 @@ def determinant(matrix):
         ValueError: If the matrix is not square.
     """
     # Validate matrix format
-    if not isinstance(matrix, list) or not all(isinstance(row, list)
-                                               for row in matrix):
+    if not isinstance(matrix, list) or not all(isinstance(row, list) for row in matrix):
         raise TypeError("matrix must be a list of lists")
 
-    # Validate square shape
+    # Validate square shape and handle 0x0 matrix
     num_rows = len(matrix)
-    if any(len(row) != num_rows for row in matrix) or num_rows == 0:
+    if num_rows == 0:
+        return 1  # Correctly handle 0x0 matrix as having determinant 1
+    if any(len(row) != num_rows for row in matrix):
         raise ValueError("matrix must be a square matrix")
 
-    # Base case for 0x0 and 1x1 matrix
+    # Base case for 1x1 matrix
     if num_rows == 1:
-        return matrix[0][0] if matrix[0] else 1
+        return matrix[0][0]
 
     # Recursive case for matrices larger than 1x1
     det = 0
