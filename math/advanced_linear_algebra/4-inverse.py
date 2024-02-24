@@ -31,7 +31,8 @@ def cofactor(matrix):
     Calculate the cofactor matrix of a matrix.
 
     Args:
-        matrix (list of lists): The matrix whose cofactor matrix should be calculated.
+        matrix (list of lists): The matrix whose cofactor matrix
+        should be calculated.
 
     Returns:
         list of lists: The cofactor matrix of the given matrix.
@@ -43,9 +44,11 @@ def cofactor(matrix):
     for i in range(len(matrix)):
         cofactor_row = []
         for j in range(len(matrix)):
-            minor_matrix = [row[:j] + row[j + 1:] for k, row in enumerate(matrix) if k != i]
+            minor_matrix = [row[:j] + row[j + 1:] for k, row in enumerate(matrix)
+                            if k != i]
             minor_det = determinant(minor_matrix)
-            cofactor_row.append(((-1) ** (i + j)) * minor_det)
+            cofactor_value = ((-1) ** (i + j)) * minor_det
+            cofactor_row.append(cofactor_value)
         cofactor_matrix.append(cofactor_row)
     return cofactor_matrix
 
@@ -55,13 +58,14 @@ def adjugate(matrix):
     Calculate the adjugate matrix of a matrix.
 
     Args:
-        matrix (list of lists): The matrix whose adjugate matrix should be calculated.
+        matrix (list of lists): The matrix whose adjugate matrix
+        should be calculated.
 
     Returns:
         list of lists: The adjugate matrix of the given matrix.
     """
     cofactor_matrix = cofactor(matrix)
-    # Transpose the cofactor matrix to get the adjugate matrix
+    # Transpose the cofactor matrix to get the adjugate
     adjugate_matrix = list(map(list, zip(*cofactor_matrix)))
     return adjugate_matrix
 
@@ -71,12 +75,15 @@ def inverse(matrix):
     Calculate the inverse of a matrix.
 
     Args:
-        matrix (list of lists): The matrix whose inverse should be calculated.
+        matrix (list of lists): The matrix whose inverse should be
+        calculated.
 
     Returns:
-        list of lists: The inverse of the matrix, or None if the matrix is singular.
+        list of lists: The inverse of the matrix, or None if the
+        matrix is singular.
     """
-    if not isinstance(matrix, list) or not all(isinstance(row, list) for row in matrix):
+    if not isinstance(matrix, list) or not all(isinstance(row, list)
+                                               for row in matrix):
         raise TypeError("matrix must be a list of lists")
     if len(matrix) == 0 or any(len(row) != len(matrix) for row in matrix):
         raise ValueError("matrix must be a non-empty square matrix")
