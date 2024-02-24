@@ -53,6 +53,7 @@ def minor(matrix):
         minor_row = []
         for j in range(len(matrix)):
             submatrix = [row[:j] + row[j + 1:] for k, row in enumerate(matrix) if k != i]
+            # Adjusted for line length
             minor_value = determinant(submatrix)
             minor_row.append(minor_value)
         minor_matrix.append(minor_row)
