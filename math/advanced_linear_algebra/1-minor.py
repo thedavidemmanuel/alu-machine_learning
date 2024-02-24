@@ -53,10 +53,13 @@ def minor(matrix):
     for i in range(len(matrix)):
         minor_row = []
         for j in range(len(matrix)):
-            # Breaking down the submatrix generation to fit within 79 characters
-            submatrix = [row[:j] + row[j + 1:] for k, row in enumerate(matrix) if k != i]
-            minor_value = determinant(submatrix)
-            minor_row.append(minor_value)
+            # Adjusting line length for compliance
+            submatrix = [row[:j] + row[j + 1:] 
+                         for k, row in enumerate(matrix) if k != i]
+            minor_row.append(determinant(submatrix))
         minor_matrix.append(minor_row)
 
     return minor_matrix
+
+
+# Ensuring there's a newline at the end of file
