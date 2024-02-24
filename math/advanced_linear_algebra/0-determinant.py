@@ -24,7 +24,7 @@ def determinant(matrix):
 
     # Check if the matrix is square
     num_rows = len(matrix)
-    if num_rows != len(matrix[0]):
+    if not all(len(row) == num_rows for row in matrix):
         raise ValueError("matrix must be a square matrix")
 
     # Base case: 0x0 matrix has determinant 1
