@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-This module defines a function that calculates the definiteness of a matrix.
+Defines a function to calculate the definiteness of a matrix.
 """
 
 import numpy as np
@@ -11,18 +11,18 @@ def definiteness(matrix):
     Calculates the definiteness of a matrix.
 
     Args:
-        matrix (numpy.ndarray): The matrix whose definiteness should be calculated.
+        matrix (numpy.ndarray): Matrix to be evaluated.
 
     Returns:
-        str: Description of matrix definiteness according to specified conditions,
-             None if matrix is not symmetric, or raises an error for incorrect types.
+        str: Definiteness of the matrix, or None if not symmetric,
+             or raises TypeError for incorrect types.
     """
     if not isinstance(matrix, np.ndarray):
         raise TypeError("matrix must be a numpy.ndarray")
     if matrix.size == 0 or matrix.shape[0] != matrix.shape[1]:
         return None
     if not np.allclose(matrix, matrix.T):
-        return None  # Updated to return None for a non-symmetric matrix
+        return None  # Return None for non-symmetric matrix
 
     eigenvalues = np.linalg.eigvals(matrix)
     all_positive = np.all(eigenvalues > 0)
