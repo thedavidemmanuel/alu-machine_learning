@@ -1,25 +1,58 @@
 #!/usr/bin/env python3
+"""
+Module for calculating the cofactor matrix of a given matrix.
+"""
 
-if __name__ == '__main__':
-    cofactor = __import__('2-cofactor').cofactor
 
-    mat1 = [[5]]
-    mat2 = [[1, 2], [3, 4]]
-    mat3 = [[1, 1], [1, 1]]
-    mat4 = [[5, 7, 9], [3, 1, 8], [6, 2, 4]]
-    mat5 = []
-    mat6 = [[1, 2, 3], [4, 5, 6]]
+def determinant(matrix):
+    """
+    Helper function to calculate the determinant of a matrix.
 
-    print(cofactor(mat1))
-    print(cofactor(mat2))
-    print(cofactor(mat3))
-    print(cofactor(mat4))
-    try:
-        cofactor(mat5)
-    except Exception as e:
-        print(e)
-    try:
-        cofactor(mat6)
-    except Exception as e:
-        print(e)
-    
+    Args:
+        matrix (list of lists): The matrix to calculate the determinant for.
+
+    Returns:
+        int or float: The determinant of the matrix.
+    """
+    if len(matrix) == 1:
+        return matrix[0][0]
+    if len(matrix) == 2:
+        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+
+    det = 0
+    for col in range(len(matrix)):
+        submatrix = [row[:col] + row[col+1:] for row in matrix[1:]]
+        det += ((-1) ** col) * matrix[0][col] * determinant(submatrix)
+    return det
+
+
+def cofactor(matrix):
+    """
+    Calculates the cofactor matrix of a matrix.
+
+    Args:
+        matrix (list of lists): The matrix whose cofactor matrix should be calculated.
+
+    Returns:
+        list of lists: The cofactor matrix of the given matrix.
+
+    Raises:
+        TypeError: If matrix is not a list of lists.
+        ValueError: If matrix is not square or is empty.
+    """
+    if not isinstance(matrix, list) or not all(isinstance(row, list) for row in matrix):
+        raise TypeError("matrix must be a list of lists")
+    if len(matrix) == 0 or any(len(row) != len(matrix) for row in matrix):
+        raise ValueError("matrix must be a non-empty square matrix")
+
+    minor_matrix = []
+    for i in range(len(matrix)):
+        minor_row = []
+        for j in range(len(matrix)):
+            submatrix = [row[:j] + row[j+1:] for k, row in enumerate(matrix) if k != i]
+            # Calculate cofactor by applying (-1)^(i+j)
+            cofactor_value = ((-1) ** (i + j)) * determinant(submatrix)
+            minor_row.append(cofactor_value)
+        minor_matrix.append(minor_row)
+
+    return minor_matrix
