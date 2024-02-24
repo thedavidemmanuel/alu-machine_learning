@@ -46,5 +46,4 @@ def determinant(matrix):
         minor = [row[:col] + row[col + 1:] for row in matrix[1:]]
         cofactor = (-1) ** col * matrix[0][col] * determinant(minor)
         det += cofactor
-
     return det
