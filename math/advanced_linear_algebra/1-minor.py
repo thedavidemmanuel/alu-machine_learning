@@ -52,10 +52,9 @@ def minor(matrix):
     for i in range(len(matrix)):
         minor_row = []
         for j in range(len(matrix)):
+            # Adjusted to avoid exceeding 79 characters
             submatrix = [row[:j] + row[j + 1:] for k, row in enumerate(matrix) if k != i]
-            # Adjusted for line length
-            minor_value = determinant(submatrix)
-            minor_row.append(minor_value)
+            minor_row.append(determinant(submatrix))
         minor_matrix.append(minor_row)
 
     return minor_matrix
