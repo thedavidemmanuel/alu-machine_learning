@@ -64,5 +64,5 @@ def cofactor(matrix):
     # Correcting for a single-element matrix to return [[1]] instead of [[0]]
     if len(matrix) == 1:
         return [[1]]
-    
+
     return minor_matrix
