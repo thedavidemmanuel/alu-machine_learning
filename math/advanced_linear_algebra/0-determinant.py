@@ -1,30 +1,35 @@
 #!/usr/bin/env python3
 """
-    a function def determinant(matrix):
-    that calculates the determinant of a matrix:
+A module to calculate the determinant of a matrix.
+
+Functions:
+    determinant(matrix): Calculates the determinant of a matrix.
 """
 
 
 def determinant(matrix):
     """
-    Calculates the determinant of a matrix
+    Calculates the determinant of a matrix.
 
     Args:
-        - matrix: list of lists whose determinant
+        matrix (list of lists): The matrix to calculate the determinant for.
 
     Returns:
-        - the determinant of matrix
+        int or float: The determinant of the matrix.
 
+    Raises:
+        TypeError: If the matrix is not a list of lists.
+        ValueError: If the matrix is not square.
     """
-    # Check if the input is a list of lists
+    # Validate the matrix is a list of lists
     if not isinstance(matrix, list) or not all(isinstance(row, list) for row in matrix):
         raise TypeError("matrix must be a list of lists")
 
-    # Check if the matrix is square
+    # Validate the matrix is square
     num_rows = len(matrix)
-    num_cols = len(matrix[0]) if matrix else 0
-    if num_rows != num_cols:
-        raise ValueError("matrix must be a square matrix")
+    for row in matrix:
+        if len(row) != num_rows:
+            raise ValueError("matrix must be a square matrix")
 
     # Base case: 0x0 matrix has determinant 1
     if num_rows == 0:
@@ -34,6 +39,7 @@ def determinant(matrix):
     if num_rows == 1:
         return matrix[0][0]
 
+    # Calculate the determinant for matrices larger than 1x1
     det = 0
     for col in range(num_rows):
         minor = [row[:col] + row[col + 1:] for row in matrix[1:]]
