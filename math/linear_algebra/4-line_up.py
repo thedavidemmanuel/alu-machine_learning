@@ -1,4 +1,6 @@
- function that adds two arrays element-wise
+#!/usr/bin/env python3
+'''
+    A function that adds two arrays element-wise
 '''
 
 
