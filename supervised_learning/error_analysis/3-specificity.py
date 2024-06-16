@@ -14,7 +14,8 @@ def specificity(confusion):
       predicted labels
 
     Returns:
-    A numpy.ndarray of shape (classes,) containing the specificity of each class.
+    A numpy.ndarray of shape (classes,) containing the
+    specificity of each class.
     """
     true_positives = np.diag(confusion)
     false_positives = np.sum(confusion, axis=0) - true_positives
