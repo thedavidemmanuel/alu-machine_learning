@@ -14,7 +14,7 @@ def sensitivity(confusion):
       predicted labels
 
     Returns:
-    A numpy.ndarray of shape (classes,) containing the 
+    A numpy.ndarray of shape (classes,) containing the
     sensitivity of each class.
     """
     true_positives = np.diag(confusion)
