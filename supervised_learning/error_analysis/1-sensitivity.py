@@ -3,6 +3,7 @@
 
 import numpy as np
 
+
 def sensitivity(confusion):
     """
     Calculates the sensitivity for each class in a confusion matrix.
