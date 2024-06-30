@@ -10,26 +10,30 @@ import sys
 
 def main(url):
     """
-    The user is passed as first argument of the script with the full API URL,
-    example: ./2-user_location.py https://api.github.com/users/holbertonschool
-    If the user doesn’t exist, print Not found.
-    If the status code is 403, print Reset in X min where X is the number
-    of minutes from now and the value of X-RateLimit-Reset.
-    Your code should not be executed when the file is imported
-    (you should use if __name__ == '__main__':).
-    """
-    response = requests.get(url)
+    Prints the location of a specific user based on their GitHub API URL.
 
-    if response.status_code == 404:
-        print("Not found")
-    elif response.status_code == 403:
-        reset_timestamp = int(response.headers["X-RateLimit-Reset"])
-        current_timestamp = int(time.time())
-        reset_in_minutes = (reset_timestamp - current_timestamp) // 60
-        print(f"Reset in {reset_in_minutes} min")
-    else:
-        location = response.json().get("location", "Location not specified")
-        print(location)
+    Args:
+        url (str): The full GitHub API URL for the user.
+
+    If the user doesn't exist, print "Not found".
+    If the status code is 403, print "Reset in X min" where X is the number
+    of minutes from now and the value of X-RateLimit-Reset.
+    """
+    try:
+        response = requests.get(url)
+
+        if response.status_code == 404:
+            print("Not found")
+        elif response.status_code == 403:
+            reset_timestamp = int(response.headers.get("X-RateLimit-Reset", 0))
+            current_timestamp = int(time.time())
+            reset_in_minutes = max(0, (reset_timestamp - current_timestamp) // 60)
+            print("Reset in {} min".format(reset_in_minutes))
+        else:
+            location = response.json().get("location", "Not available")
+            print(location)
+    except requests.RequestException:
+        print("An error occurred while making the request")
 
 
 if __name__ == "__main__":
