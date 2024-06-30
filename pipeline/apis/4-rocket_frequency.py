@@ -11,8 +11,8 @@ def main():
     Fetches and displays the number of launches per rocket.
     Orders the results by the number of launches (descending) and alphabetically.
     """
-    rockets_url = "https://api.spacexdata.com/v4/rockets"
-    launches_url = "https://api.spacexdata.com/v4/launches"
+    rockets_url = "https://api.spacexdata.com/v4/" + "rockets"
+    launches_url = "https://api.spacexdata.com/v4/" + "launches"
 
     rockets_response = requests.get(rockets_url)
     launches_response = requests.get(launches_url)
