@@ -9,10 +9,12 @@ import requests
 
 def availableShips(passengerCount):
     """
-    Retrieve a list of starships that can hold at least `passengerCount` passengers.
+    Retrieve a list of starships that can hold 
+    at least `passengerCount` passengers.
 
     Args:
-        passengerCount (int): The minimum number of passengers the starship should be able to hold.
+        passengerCount (int): The minimum number of passengers 
+        the starship should be able to hold.
 
     Returns:
         list: A list of starship names that can hold the specified number of passengers.
