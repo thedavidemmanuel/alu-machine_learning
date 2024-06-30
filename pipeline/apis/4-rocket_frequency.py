@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-    script that displays the number of launches per rocket.
+    Script that displays the number of launches per rocket.
 """
-
 
 import requests
 from collections import Counter
@@ -10,7 +9,7 @@ from collections import Counter
 
 def get_launch_count_by_rocket():
     """
-    Get all launches
+    Get all launches and count them per rocket.
     """
     url = "https://api.spacexdata.com/v4/launches"
     response = requests.get(url)
@@ -27,9 +26,8 @@ def get_launch_count_by_rocket():
 
     # Create a list of (rocket_name, count) and sort it
     rocket_launch_counts = [
-        (
-            rocket_names[rocket_id], count
-        ) for rocket_id, count in rocket_counts.items()
+        (rocket_names[rocket_id], count)
+        for rocket_id, count in rocket_counts.items()
     ]
     rocket_launch_counts.sort(key=lambda x: (-x[1], x[0]))
 
@@ -40,4 +38,3 @@ if __name__ == "__main__":
     rocket_launch_counts = get_launch_count_by_rocket()
     for rocket_name, count in rocket_launch_counts:
         print("{}: {}".format(rocket_name, count))
-        
