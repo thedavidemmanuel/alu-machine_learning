@@ -1,40 +1,29 @@
 #!/usr/bin/env python3
 """
-This module provides a function to get the list of home planets of all sentient species.
+    Return the list of names of the home
+    planets of all sentient species.
 """
 
 import requests
 
 
 def sentientPlanets():
-    """
-    Retrieve a list of names of the home planets of all sentient species.
-
-    Returns:
-        list: A list of planet names that are home to sentient species.
-    """
-    species_url = "https://swapi-api.alx-tools.com/api/species/"
-    planets = set()
-
-    while species_url:
-        response = requests.get(species_url)
-        data = response.json()
-
-        for species in data["results"]:
-            if species["designation"] == "sentient":
-                homeworld = species["homeworld"]
-                if homeworld:
-                    planet_response = requests.get(homeworld)
-                    planet_data = planet_response.json()
-                    planets.add(planet_data["name"])
-
-        species_url = data["next"]
-
-    return list(planets)
-
-
-if __name__ == "__main__":
-    planets = sentientPlanets()
-    planets.sort()  # Ensure consistent output order
-    for planet in planets:
-        print(planet)
+    '''
+    Return the list of names of the home
+    planets of all sentient species.
+    '''
+    url = "https://swapi-api.hbtn.io/api/species/?format=json"
+    speciesList = []
+    while url:
+        results = requests.get(url).json()
+        speciesList += results.get('results')
+        url = results.get('next')
+    homePlanets = []
+    for species in speciesList:
+        if species.get('designation') == 'sentient' or \
+           species.get('classification') == 'sentient':
+            url = species.get('homeworld')
+            if url:
+                planet = requests.get(url).json()
+                homePlanets.append(planet.get('name'))
+    return homePlanets
