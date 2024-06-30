@@ -10,7 +10,7 @@ import sys
 
 def main(url):
     """
-    The user is passed as the first argument of the script with the full API URL,
+    The user is passed as first argument of the script with the full API URL,
     example: ./2-user_location.py https://api.github.com/users/holbertonschool
     If the user doesn’t exist, print Not found.
     If the status code is 403, print Reset in X min where X is the number
@@ -26,7 +26,7 @@ def main(url):
         reset_timestamp = int(response.headers["X-RateLimit-Reset"])
         current_timestamp = int(time.time())
         reset_in_minutes = (reset_timestamp - current_timestamp) // 60
-        print("Reset in {} min".format(reset_in_minutes))
+        print(f"Reset in {reset_in_minutes} min")
     else:
         location = response.json().get("location", "Location not specified")
         print(location)
