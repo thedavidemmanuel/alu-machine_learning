@@ -33,7 +33,7 @@ def main():
     sorted_launch_counts = sorted(rocket_launch_counts.items(), key=lambda x: (-x[1], x[0]))
 
     for rocket_name, count in sorted_launch_counts:
-        print(f"{rocket_name}: {count}")
+        print("{}: {}".format(rocket_name, count))
 
 if __name__ == "__main__":
     main()
