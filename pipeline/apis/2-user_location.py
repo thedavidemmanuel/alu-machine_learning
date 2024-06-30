@@ -30,8 +30,8 @@ def main(url):
             reset_in_minutes = max(0, (reset_timestamp - current_timestamp) // 60)
             print("Reset in {} min".format(reset_in_minutes))
         else:
-            location = response.json().get("location", "Not available")
-            print(location)
+            location = response.json().get("location")
+            print(location if location else "Not available")
     except requests.RequestException:
         print("An error occurred while making the request")
 
