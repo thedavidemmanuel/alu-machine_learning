@@ -9,15 +9,16 @@ import requests
 
 def availableShips(passengerCount):
     """
-    Retrieve a list of starships that can hold 
+    Retrieve a list of starships that can hold
     at least `passengerCount` passengers.
 
     Args:
-        passengerCount (int): The minimum number of passengers 
+        passengerCount (int): The minimum number of passengers
         the starship should be able to hold.
 
     Returns:
-        list: A list of starship names that can hold the specified number of passengers.
+        list: A list of starship names that can hold
+        the specified number of passengers.
     """
     url = "https://swapi-api.alx-tools.com/api/starships/"
     ships = []
