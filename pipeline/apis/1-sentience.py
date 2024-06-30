@@ -21,7 +21,7 @@ def sentientPlanets():
         data = response.json()
 
         for species in data["results"]:
-            if species["classification"] in ["sentient", "reptilian", "mammal"]:  # Adjust as per SWAPI data structure
+            if species["designation"] == "sentient":
                 homeworld = species["homeworld"]
                 if homeworld:
                     planet_response = requests.get(homeworld)
