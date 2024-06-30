@@ -35,5 +35,6 @@ def sentientPlanets():
 
 if __name__ == "__main__":
     planets = sentientPlanets()
+    planets.sort()  # Ensure consistent output order
     for planet in planets:
         print(planet)
