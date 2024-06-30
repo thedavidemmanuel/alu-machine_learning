@@ -35,7 +35,8 @@ def main():
 
     rocket_names = {rocket['id']: rocket['name'] for rocket in rockets}
 
-    launch_counts = [(rocket_names[rocket_id], count) for rocket_id, count in rocket_launch_counts.items()]
+    launch_counts = [(rocket_names[rocket_id], count)
+                     for rocket_id, count in rocket_launch_counts.items()]
 
     sorted_launch_counts = sorted(launch_counts, key=lambda x: (-x[1], x[0]))
 
@@ -45,4 +46,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
