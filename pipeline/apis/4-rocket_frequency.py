@@ -6,6 +6,11 @@ Script that displays the number of launches per rocket using the SpaceX API.
 import requests
 
 def main():
+    """
+    Fetches launch and rocket data from SpaceX API, counts the number of launches per rocket,
+    and displays the results sorted by the number of launches in descending order.
+    If multiple rockets have the same amount of launches, they are sorted alphabetically.
+    """
     launches_url = "https://api.spacexdata.com/v4/launches"
     rockets_url = "https://api.spacexdata.com/v4/rockets"
 
