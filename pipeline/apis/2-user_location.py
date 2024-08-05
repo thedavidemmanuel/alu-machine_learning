@@ -1,52 +1,41 @@
 #!/usr/bin/env python3
 """
-Module to print the location of a specific GitHub user using the GitHub API.
+    script that prints the location of a specific user:
 """
 
-import sys
+
 import requests
+import time
 from datetime import datetime
 
 
-def get_user_location(api_url):
+def main(url):
     """
-    Fetch and print the location of a GitHub user.
+    - The user is passed as first argument of the script
+    with the full API URL, example: ./2-user_location.py
+    https://api.github.com/users/holbertonschool
+    - If the user doesn’t exist, print Not found
+    - If the status code is 403, print Reset in X min where X
+    is the number of minutes from now and the value of
+    X-Ratelimit-Reset
+    - Your code should not be executed when the file is
+    imported (you should use if __name__ == '__main__':)
 
-    Args:
-        api_url (str): The full GitHub API URL for the user.
-
-    Returns:
-        str: The location of the user or an error message.
     """
-    headers = {
-        'Accept': 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28'
-    }
+    response = requests.get(url)
 
-    try:
-        response = requests.get(api_url, headers=headers)
-
-        if response.status_code == 200:
-            user_data = response.json()
-            return user_data.get('location', 'No location provided')
-        elif response.status_code == 404:
-            return "Not found"
-        elif response.status_code == 403:
-            reset_time = int(response.headers.get('X-Ratelimit-Reset', 0))
-            current_time = int(datetime.now().timestamp())
-            minutes_left = (reset_time - current_time) // 60
-            return "Reset in {} min".format(minutes_left)
-        else:
-            return "An error occurred: Status code {}".format(response.status_code)
-    except requests.RequestException as e:
-        return "An error occurred: {}".format(str(e))
+    if response.status_code == 404:
+        print("Not found")
+    elif response.status_code == 403:
+        reset_timestamp = int(response.headers["X-Ratelimit-Reset"])
+        current_timestamp = int(time.time())
+        reset_in_minutes = (reset_timestamp - current_timestamp) // 60
+        print("Reset in {} min".format(reset_in_minutes))
+    else:
+        print(response.json()["location"])
 
 
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Usage: python3 2-user_location.py <github_api_user_url>")
-        sys.exit(1)
+if __name__ == "__main__":
+    import sys
 
-    api_url = sys.argv[1]
-    result = get_user_location(api_url)
-    print(result)
+    main(sys.argv[1])
