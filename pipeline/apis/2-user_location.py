@@ -1,66 +1,49 @@
 #!/usr/bin/env python3
 """
-Script that displays the number of launches per rocket using the SpaceX API.
+Script to print the location of a specific GitHub user using the GitHub API.
 """
 
+import sys
 import requests
-from collections import defaultdict
+from datetime import datetime
 
-def get_rocket_launches():
-    """
-    Fetches all launches from the SpaceX API and counts launches per rocket.
-    """
-    url = "https://api.spacexdata.com/v5/launches"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        launches = response.json()
-        
-        rocket_counts = defaultdict(int)
-        for launch in launches:
-            rocket_id = launch.get('rocket')
-            if rocket_id:
-                rocket_counts[rocket_id] += 1
-        
-        return rocket_counts
-    except requests.RequestException as e:
-        print(f"Error fetching launch data: {e}")
-        return {}
 
-def get_rocket_names():
+def get_user_location(api_url):
     """
-    Fetches all rocket names from the SpaceX API.
+    Fetch and print the location of a GitHub user.
+
+    Args:
+        api_url (str): The full GitHub API URL for the user.
+
+    Returns:
+        None
     """
-    url = "https://api.spacexdata.com/v4/rockets"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        rockets = response.json()
-        
-        return {rocket['id']: rocket['name'] for rocket in rockets}
-    except requests.RequestException as e:
-        print(f"Error fetching rocket data: {e}")
-        return {}
-
-def main():
-    rocket_counts = get_rocket_launches()
-    rocket_names = get_rocket_names()
-
-    # Combine rocket names with their launch counts
-    rocket_launch_counts = {
-        rocket_names.get(rocket_id, "Unknown Rocket"): count
-        for rocket_id, count in rocket_counts.items()
+    headers = {
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
     }
+    
+    response = requests.get(api_url, headers=headers)
 
-    # Sort rockets by launch count (descending) and then by name
-    sorted_rockets = sorted(
-        rocket_launch_counts.items(),
-        key=lambda x: (-x[1], x[0])
-    )
+    if response.status_code == 200:
+        user_data = response.json()
+        location = user_data.get('location', 'No location provided')
+        print(location)
+    elif response.status_code == 404:
+        print("Not found")
+    elif response.status_code == 403:
+        reset_time = int(response.headers.get('X-Ratelimit-Reset', 0))
+        current_time = int(datetime.now().timestamp())
+        minutes_left = (reset_time - current_time) // 60
+        print(f"Reset in {minutes_left} min")
+    else:
+        print(f"An error occurred: Status code {response.status_code}")
 
-    # Print results
-    for rocket_name, count in sorted_rockets:
-        print(f"{rocket_name}: {count}")
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) != 2:
+        print("Usage: ./2-user_location.py <github_api_user_url>")
+        sys.exit(1)
+
+    api_url = sys.argv[1]
+    get_user_location(api_url)
