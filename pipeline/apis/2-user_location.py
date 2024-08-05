@@ -1,41 +1,49 @@
 #!/usr/bin/env python3
 """
-    script that prints the location of a specific user:
+Script to print the location of a specific GitHub user using the GitHub API.
 """
 
-
+import sys
 import requests
-import time
 from datetime import datetime
 
 
-def main(url):
+def get_user_location(api_url):
     """
-    - The user is passed as first argument of the script
-    with the full API URL, example: ./2-user_location.py
-    https://api.github.com/users/holbertonschool
-    - If the user doesn’t exist, print Not found
-    - If the status code is 403, print Reset in X min where X
-    is the number of minutes from now and the value of
-    X-Ratelimit-Reset
-    - Your code should not be executed when the file is
-    imported (you should use if __name__ == '__main__':)
+    Fetch and print the location of a GitHub user.
 
+    Args:
+        api_url (str): The full GitHub API URL for the user.
+
+    Returns:
+        None
     """
-    response = requests.get(url)
+    headers = {
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+    }
 
-    if response.status_code == 404:
+    response = requests.get(api_url, headers=headers)
+
+    if response.status_code == 200:
+        user_data = response.json()
+        location = user_data.get('location', 'No location provided')
+        print(location)
+    elif response.status_code == 404:
         print("Not found")
     elif response.status_code == 403:
-        reset_timestamp = int(response.headers["X-Ratelimit-Reset"])
-        current_timestamp = int(time.time())
-        reset_in_minutes = (reset_timestamp - current_timestamp) // 60
-        print("Reset in {} min".format(reset_in_minutes))
+        reset_time = int(response.headers.get('X-Ratelimit-Reset', 0))
+        current_time = int(datetime.now().timestamp())
+        minutes_left = (reset_time - current_time) // 60
+        print("Reset in {} min".format(minutes_left))
     else:
-        print(response.json()["location"])
+        print("An error occurred: Status code {}".format(response.status_code))
 
 
-if __name__ == "__main__":
-    import sys
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print("Usage: ./2-user_location.py <github_api_user_url>")
+        sys.exit(1)
 
-    main(sys.argv[1])
+    api_url = sys.argv[1]
+    get_user_location(api_url)
