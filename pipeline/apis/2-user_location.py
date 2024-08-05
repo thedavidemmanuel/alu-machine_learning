@@ -22,7 +22,7 @@ def get_user_location(api_url):
         'Accept': 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28'
     }
-    
+
     response = requests.get(api_url, headers=headers)
 
     if response.status_code == 200:
@@ -35,9 +35,9 @@ def get_user_location(api_url):
         reset_time = int(response.headers.get('X-Ratelimit-Reset', 0))
         current_time = int(datetime.now().timestamp())
         minutes_left = (reset_time - current_time) // 60
-        print(f"Reset in {minutes_left} min")
+        print("Reset in {} min".format(minutes_left))
     else:
-        print(f"An error occurred: Status code {response.status_code}")
+        print("An error occurred: Status code {}".format(response.status_code))
 
 
 if __name__ == '__main__':
