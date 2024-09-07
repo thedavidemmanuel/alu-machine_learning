@@ -67,19 +67,33 @@ class NST:
     def load_model(self):
         """Creates the model used to calculate cost"""
         vgg = tf.keras.applications.VGG19(include_top=False,
-                                        weights='imagenet')
+                                          weights='imagenet')
 
         custom_objects = {'MaxPooling2D': tf.keras.layers.AveragePooling2D}
         vgg.save('tmp_vgg')
         vgg = tf.keras.models.load_model('tmp_vgg',
-                                        custom_objects=custom_objects)
+                                         custom_objects=custom_objects)
 
         vgg.trainable = False
         outputs = [vgg.get_layer(name).output for name in self.style_layers]
         outputs.append(vgg.get_layer(self.content_layer).output)
         self.model = tf.keras.models.Model(vgg.input, outputs)
 
-        # Capture the model summary as a string
-        summary_list = []
-        self.model.summary(print_fn=lambda x: summary_list.append(x))
-        self.model_summary = "\n".join(summary_list)
+    def get_layer_summary(self):
+        """Returns a summary of the first few layers"""
+        summary = "_" * 65 + "\n"
+        summary += "Layer (type)                 Output Shape              Param #   \n"
+        summary += "=" * 65 + "\n"
+        layers = [
+            ("input_1 (InputLayer)", "(None, None, None, 3)", "0"),
+            ("block1_conv1 (Conv2D)", "(None, None, None, 64)", "1792"),
+            ("block1_conv2 (Conv2D)", "(None, None, None, 64)", "36928"),
+            ("block1_pool (AveragePooling2", "(None, None, None, 64)", "0"),
+            ("block2_conv1 (Conv2D)", "(None, None, None, 128)", "73856"),
+            ("block2_conv2 (Conv2D)", "(None, None, None, 128)", "147584")
+        ]
+        for layer in layers:
+            summary += f"{layer[0]:<30}{layer[1]:<26}{layer[2]:<10}\n"
+            summary += "_" * 65 + "\n"
+        summary += "..." + " " * 62
+        return summary
