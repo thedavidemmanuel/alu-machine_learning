@@ -249,20 +249,22 @@ class NST:
 
         parameters:
             style_outputs [list of tf.Tensors]:
-                contains stye outputs for the generated image
+                contains style outputs for the generated image
 
         returns:
             the style cost
         """
-        length = len(self.style_layers)
-        if type(style_outputs) is not list or len(style_outputs) != length:
-            raise TypeError(
-                "style_outputs must be a list with a length of {}".format(
-                    length))
-        weight = 1 / length
+        if not isinstance(style_outputs, list):
+            raise TypeError(f"style_outputs must be a list with a length of {len(self.style_layers)}")
+        
+        if len(style_outputs) != len(self.style_layers):
+            raise TypeError(f"style_outputs must be a list with a length of {len(self.style_layers)}")
+
+        weight = 1.0 / len(self.style_layers)
         style_cost = 0
-        for i in range(length):
-            style_cost += (
-                self.layer_style_cost(style_outputs[i],
-                                      self.gram_style_features[i]) * weight)
+
+        for style_output, gram_target in zip(style_outputs, self.gram_style_features):
+            layer_style_cost = self.layer_style_cost(style_output, gram_target)
+            style_cost += layer_style_cost * weight
+
         return style_cost
