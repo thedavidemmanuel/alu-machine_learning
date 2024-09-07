@@ -81,17 +81,27 @@ class NST:
 
         return image
 
-def load_model(self):
-    """Creates the model used to calculate cost"""
-    vgg = tf.keras.applications.VGG19(include_top=False,
-                                      weights='imagenet')
-    custom_objects = {'MaxPooling2D': tf.keras.layers.AveragePooling2D}
-    vgg.save('tmp_vgg')
-    vgg = tf.keras.models.load_model('tmp_vgg',
-                                     custom_objects=custom_objects)
-    vgg.trainable = False
-    style_outputs = [vgg.get_layer(name).output
-                     for name in self.style_layers]
-    content_output = vgg.get_layer(self.content_layer).output
-    model_outputs = style_outputs + [content_output]
-    self.model = tf.keras.models.Model(vgg.input, model_outputs)
+
+    def load_model(self):
+        """Creates the model used to calculate cost"""
+        vgg = tf.keras.applications.VGG19(include_top=False,
+                                          weights='imagenet')
+
+        model = tf.keras.models.Sequential()
+        for layer in vgg.layers:
+            if isinstance(layer, tf.keras.layers.MaxPooling2D):
+                model.add(tf.keras.layers.AveragePooling2D(
+                    pool_size=layer.pool_size,
+                    strides=layer.strides,
+                    padding=layer.padding,
+                    name=layer.name
+                ))
+            else:
+                model.add(layer)
+
+        model.trainable = False
+        style_outputs = [model.get_layer(name).output
+                         for name in self.style_layers]
+        content_output = model.get_layer(self.content_layer).output
+        model_outputs = style_outputs + [content_output]
+        self.model = tf.keras.models.Model(model.input, model_outputs)
