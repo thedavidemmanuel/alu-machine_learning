@@ -67,31 +67,19 @@ class NST:
     def load_model(self):
         """Creates the model used to calculate cost"""
         vgg = tf.keras.applications.VGG19(include_top=False,
-                                          weights='imagenet')
+                                        weights='imagenet')
 
         custom_objects = {'MaxPooling2D': tf.keras.layers.AveragePooling2D}
         vgg.save('tmp_vgg')
         vgg = tf.keras.models.load_model('tmp_vgg',
-                                         custom_objects=custom_objects)
+                                        custom_objects=custom_objects)
 
         vgg.trainable = False
         outputs = [vgg.get_layer(name).output for name in self.style_layers]
         outputs.append(vgg.get_layer(self.content_layer).output)
         self.model = tf.keras.models.Model(vgg.input, outputs)
 
-    def print_model_summary(self):
-        """Prints a summary of the model with specific formatting"""
-        line = "_" * 65
-        print(line)
-        print("Layer (type)                 Output Shape              Param #   ")
-        print("=" * 65)
-        for layer in self.model.layers[:6]:  # Print only first 6 layers
-            name = layer.name
-            cls_name = layer.__class__.__name__
-            params = layer.count_params()
-            output_shape = str(layer.output_shape)
-            print("{} ({})".format(name, cls_name).ljust(29) +
-                  "{}".format(output_shape).ljust(25) +
-                  "{}".format(params).ljust(10))
-            print(line)
-        print("..." + " " * 62)  # Add ellipsis at the end
+        # Capture the model summary as a string
+        summary_list = []
+        self.model.summary(print_fn=lambda x: summary_list.append(x))
+        self.model_summary = "\n".join(summary_list)
