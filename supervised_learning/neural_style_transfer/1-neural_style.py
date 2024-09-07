@@ -81,8 +81,7 @@ class NST:
 
         return image
 
-
-def load_model(self):
+    def load_model(self):
         """Creates the model used to calculate cost"""
         vgg = tf.keras.applications.VGG19(include_top=False,
                                           weights='imagenet')
