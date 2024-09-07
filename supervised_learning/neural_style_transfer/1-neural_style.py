@@ -84,16 +84,33 @@ class NST:
     def load_model(self):
         """Creates the model used to calculate cost"""
         vgg = tf.keras.applications.VGG19(include_top=False,
-                                        weights='imagenet')
+                                          weights='imagenet')
 
         custom_objects = {'MaxPooling2D': tf.keras.layers.AveragePooling2D}
         vgg.save('tmp_vgg')
         vgg = tf.keras.models.load_model('tmp_vgg',
-                                        custom_objects=custom_objects)
+                                         custom_objects=custom_objects)
 
         vgg.trainable = False
         style_outputs = [vgg.get_layer(name).output
-                        for name in self.style_layers]
+                         for name in self.style_layers]
         content_output = vgg.get_layer(self.content_layer).output
         model_outputs = style_outputs + [content_output]
         self.model = tf.keras.models.Model(vgg.input, model_outputs)
+
+    def print_model_summary(self):
+        """Prints a summary of the model with specific formatting"""
+        line = "_" * 65
+        print(line)
+        print("Layer (type)                 Output Shape              Param #   ")
+        print("=" * 65)
+        for layer in self.model.layers[:6]:  # Print only first 6 layers
+            name = layer.name
+            class_name = layer.__class__.__name__
+            output_shape = str(layer.output_shape)
+            params = layer.count_params()
+            print(f"{name} ({class_name})".ljust(29) +
+                  f"{output_shape}".ljust(25) +
+                  f"{params}".ljust(10))
+            print(line)
+        print("..." + " " * 62)  # Add ellipsis at the end
