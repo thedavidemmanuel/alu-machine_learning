@@ -4,9 +4,7 @@
     that performs forward propagation for a bidirectional RNN:
 '''
 
-
 import numpy as np
-
 
 def bi_rnn(bi_cell, X, h_0, h_T):
     '''
@@ -24,19 +22,18 @@ def bi_rnn(bi_cell, X, h_0, h_T):
     '''
 
     t, m, i = X.shape
-    l, m, h = h_0.shape
-    H = np.zeros((t + 1, 2, m, h))
-    H[0, 0] = h_0
-    H[0, 1] = h_T
+    _, h = h_0.shape  # h_0 shape is (m, h)
+    H = np.zeros((t, m, 2*h))
+    Y = np.zeros((t, m, bi_cell.by.shape[1]))  # Assuming bi_cell.by gives output dimension
+
+    h_forward = h_0
+    h_backward = h_T
+
     for step in range(t):
-        h_prev, y = bi_cell.forward(H[step, 0], X[step])
-        H[step + 1, 0] = h_prev
-        h_next, y = bi_cell.forward(H[step, 1], y)
-        H[step + 1, 1] = h_next
-        if step == 0:
-            Y = y
-        else:
-            Y = np.concatenate((Y, y))
-    output_shape = Y.shape[-1]
-    Y = Y.reshape(t, 2, m, output_shape)
-    return (H, Y)
+        h_forward, _ = bi_cell.forward(h_forward, X[step])
+        h_backward, _ = bi_cell.backward(h_backward, X[t-1-step])
+        
+        H[step] = np.concatenate((h_forward, h_backward), axis=1)
+        Y[step] = bi_cell.output(H[step])
+
+    return H, Y
