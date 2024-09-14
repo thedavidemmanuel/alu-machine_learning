@@ -12,28 +12,34 @@ def bi_rnn(bi_cell, X, h_0, h_T):
 
         parameters:
             bi_cell: an instance of BidirectionalCell
-            X: data
-            h_0: initial hidden state
-            h_T: terminal hidden state
+            X: data to be used, given as a numpy.ndarray of shape (t, m, i)
+            h_0: initial hidden state in the forward direction, numpy.ndarray of shape (m, h)
+            h_T: initial hidden state in the backward direction, numpy.ndarray of shape (m, h)
 
         return:
-            H: all hidden states
-            Y: all outputs
+            H: numpy.ndarray containing all of the concatenated hidden states
+            Y: numpy.ndarray containing all of the outputs
     '''
 
     t, m, i = X.shape
-    _, h = h_0.shape  # h_0 shape is (m, h)
-    H = np.zeros((t, m, 2*h))
-    Y = np.zeros((t, m, bi_cell.by.shape[1]))  # Assuming bi_cell.by gives output dimension
-
-    h_forward = h_0
-    h_backward = h_T
-
+    _, h = h_0.shape
+    
+    H_forward = np.zeros((t, m, h))
+    H_backward = np.zeros((t, m, h))
+    
     for step in range(t):
-        h_forward, _ = bi_cell.forward(h_forward, X[step])
-        h_backward, _ = bi_cell.backward(h_backward, X[t-1-step])
-        
-        H[step] = np.concatenate((h_forward, h_backward), axis=1)
-        Y[step] = bi_cell.output(H[step])
+        if step == 0:
+            h_next = h_0
+        h_next = bi_cell.forward(h_next, X[step])
+        H_forward[step] = h_next
+
+    for step in range(t-1, -1, -1):
+        if step == t-1:
+            h_prev = h_T
+        h_prev = bi_cell.backward(h_prev, X[step])
+        H_backward[step] = h_prev
+
+    H = np.concatenate((H_forward, H_backward), axis=2)
+    Y = bi_cell.output(H)
 
     return H, Y
