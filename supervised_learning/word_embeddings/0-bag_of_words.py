@@ -27,7 +27,9 @@ def bag_of_words(sentences, vocab=None):
     # Tokenize sentences
     tokenized_sentences = []
     for sentence in sentences:
-        # Remove punctuation and lowercase
+        # Handle possessive 's (e.g., "children's" -> "children")
+        sentence = sentence.replace("'s", "")
+        # Remove punctuation and convert to lowercase
         translator = str.maketrans('', '', string.punctuation)
         clean_sentence = sentence.translate(translator).lower()
         tokens = clean_sentence.split()
