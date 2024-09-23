@@ -7,6 +7,7 @@ This module provides a function to create a bag of words embedding matrix.
 
 import numpy as np
 import string
+import re
 
 
 def bag_of_words(sentences, vocab=None):
@@ -27,8 +28,8 @@ def bag_of_words(sentences, vocab=None):
     # Tokenize sentences
     tokenized_sentences = []
     for sentence in sentences:
-        # Handle possessive 's (e.g., "children's" -> "children")
-        sentence = sentence.replace("'s", "")
+        # Remove possessive 's (e.g., "children's" -> "children")
+        sentence = re.sub(r"'s\b", "", sentence)
         # Remove punctuation and convert to lowercase
         translator = str.maketrans('', '', string.punctuation)
         clean_sentence = sentence.translate(translator).lower()
