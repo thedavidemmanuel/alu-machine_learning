@@ -2,7 +2,6 @@
 '''
     TF-IDF embedding
 '''
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 def tf_idf(sentences, vocab=None):
@@ -14,3 +13,4 @@ def tf_idf(sentences, vocab=None):
     embeddings = x.toarray()
     features = vectorizer.get_feature_names()
     return embeddings, features
+
