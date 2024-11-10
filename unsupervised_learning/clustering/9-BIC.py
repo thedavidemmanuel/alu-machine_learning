@@ -31,9 +31,8 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
 
     n, d = X.shape
     if kmax is None:
-        kmax = min(n, 10)  # Limit max clusters to avoid overfitting
-
-    if not isinstance(kmax, int) or kmax <= kmin:
+        kmax = n
+    elif not isinstance(kmax, int) or kmax <= kmin:
         return None, None, None, None
 
     if not isinstance(iterations, int) or iterations <= 0:
@@ -45,44 +44,24 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     if not isinstance(verbose, bool):
         return None, None, None, None
 
-    k_range = range(kmin, kmax + 1)
-    likelihoods = []
-    bics = []
+    likelihoods = np.zeros(kmax - kmin + 1)
+    bics = np.zeros(kmax - kmin + 1)
     results = []
 
-    for k in k_range:
-        # Run EM algorithm
-        pi, m, S, _, ll = expectation_maximization(
-            X, k, iterations, tol, verbose)
+    for i, k in enumerate(range(kmin, kmax + 1)):
+        pi, m, S, _, ll = expectation_maximization(X, k, iterations, tol, verbose)
+        if pi is None:
+            return None, None, None, None
 
-        if pi is None or m is None or S is None:
-            continue
-
-        # Calculate number of parameters
-        # pi: k-1 parameters (sum to 1 constraint)
-        # means: k*d parameters
-        # covariances: k*d*(d+1)/2 parameters (symmetric matrices)
+        # Number of parameters: k-1 for pi, k*d for means, k*d*(d+1)/2 for covar
         p = (k - 1) + (k * d) + (k * d * (d + 1) // 2)
-
-        # Calculate BIC
         bic = p * np.log(n) - 2 * ll
-        
-        likelihoods.append(ll)
-        bics.append(bic)
+
+        likelihoods[i] = ll
+        bics[i] = bic
         results.append((pi, m, S))
 
-    if not likelihoods:
-        return None, None, None, None
-
-    # Convert lists to arrays
-    likelihoods = np.array(likelihoods)
-    bics = np.array(bics)
-
-    # Find best k based on minimum BIC value
     best_idx = np.argmin(bics)
     best_k = kmin + best_idx
 
-    return (best_k,
-            results[best_idx],
-            likelihoods,
-            bics)
+    return best_k, results[best_idx], likelihoods, bics
