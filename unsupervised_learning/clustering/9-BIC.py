@@ -31,7 +31,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
 
     n, d = X.shape
     if kmax is None:
-        kmax = n
+        kmax = min(n, 10)  # Limit max clusters to avoid overfitting
 
     if not isinstance(kmax, int) or kmax <= kmin:
         return None, None, None, None
@@ -50,11 +50,8 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     bics = []
     results = []
 
-    best_bic = float('inf')
-    best_k = None
-    best_result = None
-
     for k in k_range:
+        # Run EM algorithm
         pi, m, S, _, ll = expectation_maximization(
             X, k, iterations, tol, verbose)
 
@@ -62,22 +59,30 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
             continue
 
         # Calculate number of parameters
-        n_params = (k - 1) + (k * d) + (k * d * (d + 1) // 2)
-        bic = n_params * np.log(n) - 2 * ll
+        # pi: k-1 parameters (sum to 1 constraint)
+        # means: k*d parameters
+        # covariances: k*d*(d+1)/2 parameters (symmetric matrices)
+        p = (k - 1) + (k * d) + (k * d * (d + 1) // 2)
 
+        # Calculate BIC
+        bic = p * np.log(n) - 2 * ll
+        
         likelihoods.append(ll)
         bics.append(bic)
         results.append((pi, m, S))
 
-        if bic < best_bic:
-            best_bic = bic
-            best_k = k
-            best_result = (pi, m, S)
-
     if not likelihoods:
         return None, None, None, None
 
+    # Convert lists to arrays
+    likelihoods = np.array(likelihoods)
+    bics = np.array(bics)
+
+    # Find best k based on minimum BIC value
+    best_idx = np.argmin(bics)
+    best_k = kmin + best_idx
+
     return (best_k,
-            best_result,
-            np.array(likelihoods),
-            np.array(bics))
+            results[best_idx],
+            likelihoods,
+            bics)
