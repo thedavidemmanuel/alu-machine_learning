@@ -2,7 +2,6 @@
 """Variational Autoencoder"""
 
 import tensorflow.keras as keras
-import tensorflow.keras.backend as K
 
 
 def autoencoder(input_dims, hidden_layers, latent_dims):
@@ -33,10 +32,10 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     def sampling(args):
         """Reparameterization trick"""
         z_mean, z_log_sigma = args
-        batch = K.shape(z_mean)[0]
-        dim = K.int_shape(z_mean)[1]
-        epsilon = K.random_normal(shape=(batch, dim))
-        return z_mean + K.exp(z_log_sigma / 2) * epsilon
+        batch = keras.backend.shape(z_mean)[0]
+        dim = keras.backend.int_shape(z_mean)[1]
+        epsilon = keras.backend.random_normal(shape=(batch, dim))
+        return z_mean + keras.backend.exp(z_log_sigma / 2) * epsilon
     
     # Reparameterization layer
     z = keras.layers.Lambda(sampling,
@@ -66,15 +65,16 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     auto = keras.Model(X_input, outputs, name='autoencoder')
     
     # Custom VAE loss
-    reconstruction_loss = keras.losses.binary_crossentropy(X_input, outputs)
-    reconstruction_loss *= input_dims
-    kl_loss = 1 + z_log_sigma - K.square(z_mean) - K.exp(z_log_sigma)
-    kl_loss = K.sum(kl_loss, axis=-1)
-    kl_loss *= -0.5
-    vae_loss = K.mean(reconstruction_loss + kl_loss)
-    auto.add_loss(vae_loss)
+    def vae_loss(x, x_decoded_mean):
+        reconstruction_loss = keras.backend.binary_crossentropy(x, x_decoded_mean)
+        reconstruction_loss = keras.backend.sum(reconstruction_loss, axis=-1)
+        kl_loss = -0.5 * keras.backend.sum(1 + z_log_sigma -
+                                          keras.backend.square(z_mean) -
+                                          keras.backend.exp(z_log_sigma),
+                                          axis=-1)
+        return reconstruction_loss + kl_loss
     
     # Compile model
-    auto.compile(optimizer='adam')
+    auto.compile(optimizer='adam', loss=vae_loss)
     
     return encoder, decoder, auto
