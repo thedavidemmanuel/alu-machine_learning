@@ -44,24 +44,39 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     if not isinstance(verbose, bool):
         return None, None, None, None
 
-    likelihoods = np.zeros(kmax - kmin + 1)
-    bics = np.zeros(kmax - kmin + 1)
-    results = []
+    best_k = 0
+    best_result = None
+    best_bic = float('inf')
+    l = np.zeros(kmax - kmin + 1)
+    b = np.zeros(kmax - kmin + 1)
 
-    for i, k in enumerate(range(kmin, kmax + 1)):
+    k = kmin
+    i = 0
+    while k <= kmax:
+        # Run EM for current k
         pi, m, S, _, ll = expectation_maximization(X, k, iterations, tol, verbose)
+        
         if pi is None:
             return None, None, None, None
-
-        # Number of parameters: k-1 for pi, k*d for means, k*d*(d+1)/2 for covar
+            
+        # Calculate BIC
         p = (k - 1) + (k * d) + (k * d * (d + 1) // 2)
         bic = p * np.log(n) - 2 * ll
+        
+        # Store results
+        l[i] = ll
+        b[i] = bic
+        
+        # Update best if needed
+        if bic < best_bic:
+            best_k = k
+            best_result = (pi, m, S)
+            best_bic = bic
+            
+        k += 1
+        i += 1
 
-        likelihoods[i] = ll
-        bics[i] = bic
-        results.append((pi, m, S))
+    if best_k == 0:
+        return None, None, None, None
 
-    best_idx = np.argmin(bics)
-    best_k = kmin + best_idx
-
-    return best_k, results[best_idx], likelihoods, bics
+    return best_k, best_result, l, b
